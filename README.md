@@ -69,3 +69,27 @@
 ✔ Store transaction history permanently<br>
 ✔ Load data when the system restarts<br>
 </p>
+<br><br>
+ <p><h4>This attribute are optional</h4></p>
+ <br><br>
+ <p>
+1️⃣ Reporting & Statements<br>
+✔Account Statements: Monthly, quarterly, yearly account statements.<br>
+✔Transaction Reports: Detailed reports of all account transactions.<br>
+✔Loan Reports: Report showing loan details, installments, and status.<br>
+✔Audit Logs: Logs of all system activities and changes for security and compliance.<br>
+ <br><br>
+2️⃣ User Interface<br>
+✔Customer Dashboard: Displays account balance, recent transactions, loan status, etc.<br>
+✔Banking Services: Allows customers to perform actions like transfers, bill payments, etc.<br>
+✔Admin Dashboard: Provides bank staff/admins with oversight on customer accounts, transactions, etc.<br>
+<br><br>
+3️⃣ Integration with External Systems<br>
+✔Payment Gateways: Integration with external systems for processing payments.<br>
+✔Banking Network Integration: For ATM networks, POS systems, etc.<br>
+✔Regulatory Systems: Integration with government or regulatory bodies for compliance.<br>
+<br><br>
+4️⃣ Communication & Notifications<br>
+✔SMS/Email Alerts: Notifications for transactions, loan repayment reminders, etc.<br>
+✔Push Notifications: Real-time alerts for account activity.<br>
+<br><br></p>
