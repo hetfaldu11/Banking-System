@@ -490,6 +490,11 @@ int main(){
                     flag=false;
                     break;
 
+                default:
+                    system("CLS");
+                    cout<<"Please choose appropriate option form list..."<<endl<<endl;
+                    break;
+                    
                 case 3:
                     system("CLS");
                     cout<<"Update account information : "<<endl<<endl;
@@ -499,6 +504,7 @@ int main(){
                     cout<<"4 : Update phone no"<<endl;
                     cout<<"5 : Update address"<<endl;
                     cout<<"6 : Update password"<<endl;
+                    cout<<"7 : Back"<<endl;
                     cout<<endl<<"Choose an option : ";
                     int choice;
                     cin>>choice;
@@ -628,6 +634,8 @@ int main(){
                             system("CLS");
                             break;
 
+                        
+
                         case 5:
                             system("CLS");
                             cout<<"Enter new address : ";
@@ -687,6 +695,10 @@ int main(){
                             system("CLS");
                             break;
 
+                        case 7:
+                            system("CLS");
+                            break;
+
                         default:
                             system("CLS");
                             cout<<"Invalid option !"<<endl;
@@ -694,6 +706,7 @@ int main(){
                             getch();
                             system("CLS");
                             break;
+                            
                     }
                 break;
             }
