@@ -399,9 +399,8 @@ int Customer :: account_number = startingAccountNumber;
 
 int main(){
     while(true){
-        if(checkforcreateaccountorlogin()!=true)
-            create_account();    
-
+        while(checkforcreateaccountorlogin()!=true)
+            create_account();
         Customer &client=login();
         client.show_accountnumber();
 
