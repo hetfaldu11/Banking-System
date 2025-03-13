@@ -123,6 +123,23 @@ class Customer{
         
 }cust[10];
 
+
+string passwordtexter(){
+    string password;
+    while(1){
+        char s;
+        s=getch();
+        if (s == '\b') {
+            cout << "\b \b";
+            password.pop_back();
+        }
+        if(s=='\r') break;
+        else    password+=s;
+        cout<<"*";
+    }
+    return password;
+}
+
 bool checkaccountnumberisexistornot(int account_number){
     
     bool accountnumberexist=false;
@@ -157,11 +174,43 @@ void fundtransfer(Customer& client){
         }
     }
 
-    cout<<"Enter amoount you want to trasfer : ";
-    cin>>amount;
-
     while(true){
+
+        cout<<"Enter amount you want to trasfer : ";
+        cin>>amount;
+        bool back=false;
+
         if(client.get_balance()-amount>5000){
+            string password;
+            
+
+            while(true){
+
+                cout<<"Enter password : ";
+                password=passwordtexter();
+
+                if(client.check_password(password)==true){
+                    system("CLS");
+                    cout<<endl<<"FundTrasfering Succesull..."<<endl<<endl;
+                    cout<<"Press any key to continuee...";
+                    getch();
+                    system("CLS");
+                    break;
+                }
+                else{
+                    system("CLS");
+                    cout<<"You entered an wrong password..."<<endl<<endl;
+                    cout<<"Enter password or press 0 for back : ";
+                    password=passwordtexter();
+                    if(password=="0"){
+                        back=true;
+                        break;
+                    }
+                }
+            }
+
+            if(back==true)  break;
+
             client.withdraw(amount);
             cust[account_number-startingAccountNumber].deposit(amount);
             return;
@@ -220,21 +269,6 @@ bool checkforcreateaccountorlogin()
     system("CLS");
 }
 
-string passwordtexter(){
-    string password;
-    while(1){
-        char s;
-        s=getch();
-        if (s == '\b') {
-            cout << "\b \b";
-            password.pop_back();
-        }
-        if(s=='\r') break;
-        else    password+=s;
-        cout<<"*";
-    }
-    return password;
-}
 
 Customer &login(){
     system("CLS");
@@ -497,7 +531,6 @@ int main(){
                     }
                     system("CLS");
                     break;
-
 
                 case 4:
                     system("CLS");
