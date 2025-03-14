@@ -101,24 +101,146 @@ class Customer{
         }
 
         void show_balance(){
-            cout<<"Name : "<<username<<endl;
+            cout<<"Name : "<<name<<endl;
             cout<<"Balance : "<<balance<<endl;
         }
 
-        void show_accountnumber(){
-            cout<<endl<<"Account number : "<<personal_account_no<<endl;
+        int get_personnalaccountnumber(){
+            return personal_account_no;
         }
 
         static int get_accountnumber(){
             return account_number;
         }
 
-        bool check_password(string pass) {
-            return password == pass;
+        bool check_passwordclass(string password) {
+            if(password==this->password)
+                return true;
+            else    
+                return false;
         }
-
         
 }cust[10];
+
+string passwordtexter(){
+    string password;
+    while(1){
+        char s;
+        s=getch();
+        if (s == '\b') {
+            cout << "\b \b";
+            password.pop_back();
+        }
+        if(s=='\r') break;
+        else    password+=s;
+        cout<<"*";
+    }
+    return password;
+}
+
+bool checkaccountnumberisexistornot(int account_number){
+    
+    bool accountnumberexist=false;
+    
+    for(int i=0;i<numberofuser-startingAccountNumber;i++)
+    {
+        if(account_number==i+startingAccountNumber){
+            accountnumberexist=true;
+        }
+    }
+
+    return accountnumberexist;
+}
+
+void fundtransfer(Customer& client){
+
+    int account_number;
+    float amount;
+    cout<<"Enter account number you want to transfer money : ";
+    cin>>account_number;
+    while(true){
+        if(checkaccountnumberisexistornot(account_number)==false)
+        {
+            system("CLS");
+            cout<<endl<<"Account number is not exist..."<<endl<<endl;
+            cout<<"Enter valid accountnumber or enter 0 to exit : ";
+            cin>>account_number;
+            if(account_number==0)   return;
+        }
+        else{
+            break;
+        }
+    }
+
+    while(true){
+
+        cout<<"Enter amount you want to trasfer : ";
+        cin>>amount;
+        bool back=false;
+
+        if(client.get_balance()-amount>5000){
+            string password;
+            
+
+            while(true){
+
+                cout<<"Enter password : ";
+                password=passwordtexter();
+
+                if(client.check_passwordclass(password)==true){
+                    system("CLS");
+                    cout<<endl<<"FundTrasfering Succesull..."<<endl<<endl;
+                    cout<<"Press any key to continuee...";
+                    getch();
+                    system("CLS");
+                    break;
+                }
+                else{
+                    system("CLS");
+                    cout<<"You entered an wrong password..."<<endl<<endl;
+                    cout<<"Enter password or press 0 for back : ";
+                    password=passwordtexter();
+                    if(password=="0"){
+                        back=true;
+                        break;
+                    }
+                }
+            }
+
+            if(back==true)  break;
+
+            client.withdraw(amount);
+            cust[account_number-startingAccountNumber].deposit(amount);
+            return;
+        }
+        else{
+            system("CLS");
+            cout<<endl<<"Insufficient Balance..."<<endl<<endl;
+            cout<<"Enter 0 to exit or amount want to transfer : "<<endl;
+        }
+    }
+}
+
+string checkforuniqueUsername(string username){
+    while(true){
+        bool uniqueusername=true;
+        for(int i=0;i<numberofuser-startingAccountNumber;i++){
+            if(username==cust[i].get_username())
+            {
+                uniqueusername=false;
+                cout<<endl<<"This username is already taken... "<<endl<<endl;
+            }
+        }
+
+        if(uniqueusername==true){
+            return username;
+        }
+        else{
+            cout<<"Enter other username : ";
+            cin>>username;
+        }
+    }
+}
 
 bool checkforcreateaccountorlogin()
 {
@@ -143,22 +265,6 @@ bool checkforcreateaccountorlogin()
             cout<<"Please choose appropriate option : ";
     }
     system("CLS");
-}
-
-string passwordtexter(){
-    string password;
-    while(1){
-        char s;
-        s=getch();
-        if (s == '\b') {
-            cout << "\b \b";
-            password.pop_back();
-        }
-        if(s=='\r') break;
-        else    password+=s;
-        cout<<"*";
-    }
-    return password;
 }
 
 Customer &login(){
@@ -192,7 +298,7 @@ Customer &login(){
                 continue;
             }
     
-            if(cust[account_number - startingAccountNumber].check_password(password)&&!password.empty()){
+            if(cust[account_number - startingAccountNumber].check_passwordclass(password)&&!password.empty()){
                 system("CLS");
                 break;
             }
@@ -210,7 +316,7 @@ Customer &login(){
     }
     else{
         string Username = AccountnumberOrUsername;
-        int account_number = -1; // ✅ Initialize to avoid undefined behavior
+        int account_number = -1;
         
         while (true) {
             cout << "Enter password : ";
@@ -227,7 +333,7 @@ Customer &login(){
                 }
             }
         
-            if (UserNameExist && cust[account_number - startingAccountNumber].check_password(password)) {
+            if (UserNameExist && cust[account_number - startingAccountNumber].check_passwordclass(password)) {
                 system("CLS");
                 break;
             } 
@@ -271,7 +377,7 @@ string validphonenumberchecker(string phoneNumber) {
         bool isValid = true;
 
         // Check length
-        if (phoneNumber.size() != 10) {
+        if (phoneNumber.size() != 10||phoneNumber.empty()) {
             isValid = false;
         } else {
             // Check each character is a digit
@@ -320,6 +426,7 @@ void create_account(){
     getline(cin,name);
     cout<<"Enter your Username : ";
     getline(cin,username);
+    username=checkforuniqueUsername(username);
     cout<<"Enter email address : ";
     cin>>email;
     email=validemailchecker(email);
@@ -348,7 +455,7 @@ void create_account(){
     system("CLS");
 
     cust[numberofuser-startingAccountNumber]=Customer(name,username,email,phone_no,address,balance,password);
-    cust[numberofuser-startingAccountNumber].show_accountnumber();
+    cout<<"Your accountnumber : "<<cust[numberofuser-startingAccountNumber].get_personnalaccountnumber()<<endl<<endl;
     cout<<endl<<"Account created successfully !"<<endl;
     cout<<"press any key to continue...";
     getch();
@@ -356,43 +463,50 @@ void create_account(){
     numberofuser++;
 }
 
-bool checkingyesorno(string yesorno){
-    while(true)
-    {
-        if(tolower(yesorno[0])=='y'&&tolower(yesorno[1]=='e')&&tolower(yesorno[2]=='s')&&yesorno.size()==3)
+bool passwordchecker(Customer& client){
+    string password;
+    cout<<"Enter password : ";
+    password=passwordtexter();
+
+    while(true){
+        if(client.check_passwordclass(password)==true){
+            system("CLS");
             return true;
-        else if(tolower(yesorno[0]=='n'&&tolower(yesorno[1])=='o'&&yesorno.size()==2))
-            return false;
+            break;
+        }
         else{
-            cout<<"Please type an valid input : ";
-            cin>>yesorno;
+            system("CLS");
+            cout<<endl<<"Password is incorrect..."<<endl<<endl;
+            cout<<"Enter passowrd or enter 0 to exit : ";
+            password=passwordtexter();
+            if(password=="0")   return false;
         }
     }
-}
 
+}
 int Customer :: account_number = startingAccountNumber;
 
 int main(){
     while(true){
-        if(checkforcreateaccountorlogin()!=true)
-            create_account();    
-
+        while(checkforcreateaccountorlogin()!=true)
+            create_account();
         Customer &client=login();
-        client.show_accountnumber();
 
         bool flag=true;
 
         while(flag){
-            cout<<"Welcome "<<client.get_name()<<endl;
+            cout<<"Welcome "<<client.get_name()<<endl<<endl;
             cout<<"1 : Deposit"<<endl;
             cout<<"2 : Withdraw"<<endl;
             cout<<"3 : Update account information"<<endl;
             cout<<"4 : Show balance"<<endl;
             cout<<"5 : View account details"<<endl;
-            cout<<"6 : Exit"<<endl;
+            cout<<"6 : Fund Transfer"<<endl;
+            cout<<"7 : Logout"<<endl;
             cout<<endl<<"Choose an option : ";
             int choice;
             cin>>choice;
+            string password;
 
             switch(choice) {
                 case 1:
@@ -412,7 +526,26 @@ int main(){
                     system("CLS");
                     cout<<"Enter the amount you want to withdraw : ";
                     cin>>amount;
-                    amount=client.withdraw(amount);
+                    
+                    while(true){
+                        cout<<"Enter your password : ";
+                        cin.ignore();
+                        password=passwordtexter();
+                        if(client.check_passwordclass(password))
+                        {
+                            client.withdraw(amount);
+                            cout<<endl<<"Withdaw Successfull..."<<endl;
+                            cout<<endl<<"Remining Balance : "<<client.get_balance()<<endl<<endl;
+                            cout<<"Press any key to continue...";
+                            getch();
+                            break;
+                        }
+                        else{
+                            system("CLS");
+                            cout<<"You entered wrong password...";
+                            continue;
+                        }
+                    }
                     system("CLS");
                     break;
 
@@ -429,6 +562,7 @@ int main(){
                     system("CLS");
                     cout<<"Name : "<<client.get_name()<<endl;
                     cout<<"Username : "<<client.get_username()<<endl;
+                    cout<<"Accountnumber : "<<client.get_accountnumber()<<endl;
                     cout<<"Email : "<<client.get_email()<<endl;
                     cout<<"Phone : "<<client.get_phoneno()<<endl;
                     cout<<"Address : "<<client.get_address()<<endl;
@@ -436,8 +570,14 @@ int main(){
                     getch();
                     system("CLS");
                     break;
-                
+
                 case 6:
+                    system("CLS");
+                    fundtransfer(client);
+                    system("CLS");
+                    break;
+                
+                case 7:
                     system("CLS");
                     cout<<"Logging out..."<<endl;
                     cout<<"Press any key to continue...";
@@ -446,6 +586,11 @@ int main(){
                     flag=false;
                     break;
 
+                default:
+                    system("CLS");
+                    cout<<"Please choose appropriate option form list..."<<endl<<endl;
+                    break;
+                    
                 case 3:
                     system("CLS");
                     cout<<"Update account information : "<<endl<<endl;
@@ -455,12 +600,14 @@ int main(){
                     cout<<"4 : Update phone no"<<endl;
                     cout<<"5 : Update address"<<endl;
                     cout<<"6 : Update password"<<endl;
+                    cout<<"7 : Back"<<endl;
                     cout<<endl<<"Choose an option : ";
                     int choice;
                     cin>>choice;
                     string new_data;
-                    string old_password;
+                    string password;
                     string yesorno;
+                    bool back=false;
                     switch(choice){
                         case 1:
                             system("CLS");
@@ -468,21 +615,25 @@ int main(){
                             cin.ignore();
                             getline(cin,new_data);
 
-                            cout<<endl<<"Are you sure you want to change name , type Yes otherwise No: ";
-                            cin>>yesorno;
-
-                            if(!checkingyesorno(yesorno))   break;
-
                             while(true){
-                                cout<<"Enter password : ";
-                                old_password=passwordtexter();
-                                if(client.check_password(old_password)){
+                                cout<<"Enter password or enter 0 to exit : ";
+                                password=passwordtexter();
+                                if(password=="0"){
+                                    back=true;
+                                    break;
+                                }  
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
                                 else {
                                     cout<<endl<<"You enter incorrect password !"<<endl<<endl;
                                 }
+                            }
+
+                            if(back==true){
+                                system("CLS");
+                                break;
                             }
 
                             client.update_name(new_data);
@@ -497,22 +648,27 @@ int main(){
                             cout<<"Enter new username : ";
                             cin.ignore();
                             getline(cin,new_data);
-
-                            cout<<endl<<"Are you sure you want to change username , type Yes otherwise No: ";
-                            cin>>yesorno;
-
-                            if(!checkingyesorno(yesorno))   break;
+                            new_data=checkforuniqueUsername(new_data);
 
                             while(true){
-                                cout<<"Enter password : ";
-                                old_password=passwordtexter();
-                                if(client.check_password(old_password)){
+                                cout<<"Enter password or enter 0 to exit : ";
+                                password=passwordtexter();
+                                if(password=="0"){
+                                    back=true;
+                                    break;
+                                }  
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
                                 else {
                                     cout<<endl<<"You enter incorrect password !"<<endl<<endl;
                                 }
+                            }
+
+                            if(back==true){
+                                system("CLS");
+                                break;
                             }
 
                             client.update_username(new_data);
@@ -529,21 +685,25 @@ int main(){
 
                             new_data=validemailchecker(new_data);
 
-                            cout<<endl<<"Are you sure you want to change email , type Yes otherwise No: ";
-                            cin>>yesorno;
-
-                            if(!checkingyesorno(yesorno))   break;
-
                             while(true){
-                                cout<<"Enter password : ";
-                                old_password=passwordtexter();
-                                if(client.check_password(old_password)){
+                                cout<<"Enter password or enter 0 to exit : ";
+                                password=passwordtexter();
+                                if(password=="0"){
+                                    back=true;
+                                    break;
+                                }  
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
                                 else {
                                     cout<<endl<<"You enter incorrect password !"<<endl<<endl;
                                 }
+                            }
+
+                            if(back==true){
+                                system("CLS");
+                                break;
                             }
 
                             client.update_email(new_data);
@@ -560,21 +720,25 @@ int main(){
 
                             new_data=validphonenumberchecker(new_data);
 
-                            cout<<endl<<"Are you sure you want to change phone number , type Yes otherwise No: ";
-                            cin>>yesorno;
-
-                            if(!checkingyesorno(yesorno))   break;
-
                             while(true){
-                                cout<<"Enter password : ";
-                                old_password=passwordtexter();
-                                if(client.check_password(old_password)){
+                                cout<<"Enter password or enter 0 to exit : ";
+                                password=passwordtexter();
+                                if(password=="0"){
+                                    back=true;
+                                    break;
+                                }  
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
                                 else {
                                     cout<<endl<<"You enter incorrect password !"<<endl<<endl;
                                 }
+                            }
+
+                            if(back==true){
+                                system("CLS");
+                                break;
                             }
 
                             client.update_phoneno(new_data);
@@ -584,26 +748,33 @@ int main(){
                             system("CLS");
                             break;
 
+                        
+
                         case 5:
                             system("CLS");
                             cout<<"Enter new address : ";
                             cin.ignore();
 
-                            cout<<endl<<"Are you sure you want to change  address, type Yes otherwise No: ";
-                            cin>>yesorno;
-
-                            if(!checkingyesorno(yesorno))   break;
 
                             while(true){
-                                cout<<"Enter old password : ";
-                                old_password=passwordtexter();
-                                if(client.check_password(old_password)){
+                                cout<<"Enter password or enter 0 to exit : ";
+                                password=passwordtexter();
+                                if(password=="0"){
+                                    back=true;
+                                    break;
+                                }  
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
                                 else {
                                     cout<<endl<<"You enter incorrect password !"<<endl<<endl;
                                 }
+                            }
+
+                            if(back==true){
+                                system("CLS");
+                                break;
                             }
 
                             getline(cin,new_data);
@@ -619,15 +790,14 @@ int main(){
                             cout<<"Enter new password : ";
                             new_data=passwordtexter();
 
-                            cout<<endl<<"Are you sure you want to change password , type Yes otherwise No: ";
-                            cin>>yesorno;
-
-                            if(!checkingyesorno(yesorno))   break;
-
                             while(true){
-                                cout<<"Enter old password : ";
-                                old_password=passwordtexter();
-                                if(client.check_password(old_password)){
+                                cout<<"Enter password or enter 0 to exit : ";
+                                password=passwordtexter();
+                                if(password=="0"){
+                                    back=true;
+                                    break;
+                                }  
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
@@ -636,10 +806,19 @@ int main(){
                                 }
                             }
 
+                            if(back==true){
+                                system("CLS");
+                                break;
+                            }
+
                             client.update_password(new_data);
                             cout<<"Password updated successfully !"<<endl;
                             cout<<"Press any key to continue...";
                             getch();
+                            system("CLS");
+                            break;
+
+                        case 7:
                             system("CLS");
                             break;
 
@@ -650,12 +829,11 @@ int main(){
                             getch();
                             system("CLS");
                             break;
+                            
                     }
-                    break;
+                break;
             }
-        
         }
-        
     }
     return 0;
 }

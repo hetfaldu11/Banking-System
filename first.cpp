@@ -20,7 +20,7 @@ class Customer{
 
     public:
 
-        Customer(string name,string username,string email,string phone_no,string address,float amount,string password){
+        Customer(string name,string username,string email,string phone_no,string address,float amount,string password,int account_number){
             this->name=name;
             this->username=username;
             this->email=email;
@@ -28,11 +28,12 @@ class Customer{
             this->address=address;
             this->balance=amount;
             this->password=password;
-            personal_account_no=account_number;
-            account_number++;
+            this->personal_account_no=account_number;
         }
 
-        Customer(){}
+        Customer(){
+            personal_account_no=-1;
+        }
         
         string get_username(){
             return username;
@@ -105,24 +106,45 @@ class Customer{
             cout<<"Balance : "<<balance<<endl;
         }
 
-        void show_accountnumber(){
-            cout<<endl<<"Account number : "<<personal_account_no<<endl;
+        int get_personnalaccountnumber(){
+            return personal_account_no;
         }
 
         static int get_accountnumber(){
             return account_number;
         }
 
-        bool check_password(string password) {
+        bool check_passwordclass(string password) {
             if(password==this->password)
                 return true;
             else    
                 return false;
         }
 
+        void deleteaccount(){
+            this->name="";
+            this->username="";
+            this->email="";
+            this->phone_no="";
+            this->address="";
+            this->balance=0;
+            this->password="";
+            personal_account_no=-1;
+        }
+
         
 }cust[10];
 
+int giveaccountnumber(){
+            
+    for(int i=0;i<numberofuser-startingAccountNumber;i++)
+    {
+        if(cust[i].get_personnalaccountnumber()==-1){
+            return i+startingAccountNumber;
+        }
+    }
+    return numberofuser++;
+}
 
 string passwordtexter(){
     string password;
@@ -189,7 +211,7 @@ void fundtransfer(Customer& client){
                 cout<<"Enter password : ";
                 password=passwordtexter();
 
-                if(client.check_password(password)==true){
+                if(client.check_passwordclass(password)==true){
                     system("CLS");
                     cout<<endl<<"FundTrasfering Succesull..."<<endl<<endl;
                     cout<<"Press any key to continuee...";
@@ -269,8 +291,7 @@ bool checkforcreateaccountorlogin()
     system("CLS");
 }
 
-
-Customer &login(){
+Customer &login(bool& loginflag){
     system("CLS");
     cout<<"Login Section : " << endl<<endl;
 
@@ -296,25 +317,36 @@ Customer &login(){
             if(!(account_number>=startingAccountNumber&&account_number<=startingAccountNumber+10))
             {
                 cout<<endl<<"Accountnumber is not exist !"<<endl;
-                cout<<"Enter valid account number : ";
+                cout<<"Enter valid account number or enter 0 for exit : ";
                 cin>>account_number;
+                if(account_number==0){
+                    loginflag=false;
+                    break;
+                }
                 continue;
             }
     
-            if(cust[account_number - startingAccountNumber].check_password(password)&&!password.empty()){
+            if(cust[account_number - startingAccountNumber].check_passwordclass(password)&&!password.empty()){
                 system("CLS");
                 break;
             }
             else{
                 cout<<endl<<"Accountnumber or Password incorrect !"<<endl;
-                cout<<"Enter your account number : ";
+                cout<<"Enter your account number or enter 0 for exit  : ";
                 cin>>account_number;
+                if(account_number==0){
+                    loginflag=false;
+                    break;
+                }
             }
         }
-        cout<<"Logged in successfully !"<<endl;
-        cout<<"press any key to continue...";
-        getch();
-        system("CLS");
+        if(loginflag==true)
+        {
+            cout<<"Logged in successfully !"<<endl;
+            cout<<"press any key to continue...";
+            getch();
+            system("CLS");
+        }
         return cust[account_number-startingAccountNumber];
     }
     else{
@@ -336,7 +368,7 @@ Customer &login(){
                 }
             }
         
-            if (UserNameExist && cust[account_number - startingAccountNumber].check_password(password)) {
+            if (UserNameExist && cust[account_number - startingAccountNumber].check_passwordclass(password)) {
                 system("CLS");
                 break;
             } 
@@ -347,15 +379,23 @@ Customer &login(){
                 UserNameExist = false;
                 account_number = -1;
         
-                cout << "Enter valid Username : ";
+                cout << "Enter valid Username or enter 0 for exit : ";
                 cin >> Username;
+                if(Username=="0")
+                {
+                    loginflag=false;
+                    break;
+                }
             }
         }
         
-        cout << "Logged in successfully!" << endl;
-        cout << "Press any key to continue...";
-        getch();
-        system("CLS");
+        if(loginflag==true)
+        {
+            cout<<"Logged in successfully !"<<endl;
+            cout<<"press any key to continue...";
+            getch();
+            system("CLS");
+        }
         return cust[account_number - startingAccountNumber];
         
     }
@@ -457,35 +497,58 @@ void create_account(){
     }
     system("CLS");
 
-    cust[numberofuser-startingAccountNumber]=Customer(name,username,email,phone_no,address,balance,password);
-    cust[numberofuser-startingAccountNumber].show_accountnumber();
-    cout<<endl<<"Account created successfully !"<<endl;
-    cout<<"press any key to continue...";
+    int account_number=giveaccountnumber();
+    cust[account_number-startingAccountNumber]=Customer(name,username,email,phone_no,address,balance,password,account_number);
+    cout<<"Your account is successfully created!"<<endl<<endl;
+    cout<<"Your AccountNumber : "<<cust[account_number-startingAccountNumber].get_personnalaccountnumber()<<endl;
+    cout<<"Press any key to continue...";
     getch();
-    system("CLS");
-    numberofuser++;
+}
+
+bool passwordchecker(Customer& client){
+    string password;
+    cout<<"Enter password : ";
+    password=passwordtexter();
+
+    while(true){
+        if(client.check_passwordclass(password)==true){
+            system("CLS");
+            return true;
+            break;
+        }
+        else{
+            system("CLS");
+            cout<<endl<<"Password is incorrect..."<<endl<<endl;
+            cout<<"Enter passowrd or enter 0 to exit : ";
+            password=passwordtexter();
+            if(password=="0")   return false;
+        }
+    }
+
 }
 
 int Customer :: account_number = startingAccountNumber;
 
 int main(){
     while(true){
+        bool loginflag=true;
         while(checkforcreateaccountorlogin()!=true)
             create_account();
-        Customer &client=login();
-        client.show_accountnumber();
+        Customer &client=login(loginflag);
+        if(loginflag==false)    continue;
 
         bool flag=true;
 
         while(flag){
-            cout<<"Welcome "<<client.get_name()<<endl;
+            cout<<"Welcome "<<client.get_name()<<endl<<endl;
             cout<<"1 : Deposit"<<endl;
             cout<<"2 : Withdraw"<<endl;
             cout<<"3 : Update account information"<<endl;
             cout<<"4 : Show balance"<<endl;
             cout<<"5 : View account details"<<endl;
             cout<<"6 : Fund Transfer"<<endl;
-            cout<<"7 : Logout"<<endl;
+            cout<<"7 : Delete Account"<<endl;
+            cout<<"8 : Logout"<<endl;
             cout<<endl<<"Choose an option : ";
             int choice;
             cin>>choice;
@@ -514,7 +577,7 @@ int main(){
                         cout<<"Enter your password : ";
                         cin.ignore();
                         password=passwordtexter();
-                        if(client.check_password(password))
+                        if(client.check_passwordclass(password))
                         {
                             client.withdraw(amount);
                             cout<<endl<<"Withdaw Successfull..."<<endl;
@@ -532,6 +595,7 @@ int main(){
                     system("CLS");
                     break;
 
+
                 case 4:
                     system("CLS");
                     client.show_balance();
@@ -544,6 +608,7 @@ int main(){
                     system("CLS");
                     cout<<"Name : "<<client.get_name()<<endl;
                     cout<<"Username : "<<client.get_username()<<endl;
+                    cout<<"Accountnumber : "<<client.get_personnalaccountnumber()<<endl;
                     cout<<"Email : "<<client.get_email()<<endl;
                     cout<<"Phone : "<<client.get_phoneno()<<endl;
                     cout<<"Address : "<<client.get_address()<<endl;
@@ -557,8 +622,22 @@ int main(){
                     fundtransfer(client);
                     system("CLS");
                     break;
-                
+
                 case 7:
+                    system("CLS");
+                    if(passwordchecker(client)==true)
+                    {
+                        client.deleteaccount();
+                        cout<<"Your account is successfully deleted..."<<endl<<endl;
+                        cout<<"Press any key to continue.";
+                        getch();
+                        flag=false;
+
+                    }
+                    system("CLS");
+                    break;
+                
+                case 8:
                     system("CLS");
                     cout<<"Logging out..."<<endl;
                     cout<<"Press any key to continue...";
@@ -603,7 +682,7 @@ int main(){
                                     back=true;
                                     break;
                                 }  
-                                if(client.check_password(password)){
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
@@ -629,6 +708,7 @@ int main(){
                             cout<<"Enter new username : ";
                             cin.ignore();
                             getline(cin,new_data);
+                            new_data=checkforuniqueUsername(new_data);
 
                             while(true){
                                 cout<<"Enter password or enter 0 to exit : ";
@@ -637,7 +717,7 @@ int main(){
                                     back=true;
                                     break;
                                 }  
-                                if(client.check_password(password)){
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
@@ -672,7 +752,7 @@ int main(){
                                     back=true;
                                     break;
                                 }  
-                                if(client.check_password(password)){
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
@@ -707,7 +787,7 @@ int main(){
                                     back=true;
                                     break;
                                 }  
-                                if(client.check_password(password)){
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
@@ -743,7 +823,7 @@ int main(){
                                     back=true;
                                     break;
                                 }  
-                                if(client.check_password(password)){
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
@@ -777,7 +857,7 @@ int main(){
                                     back=true;
                                     break;
                                 }  
-                                if(client.check_password(password)){
+                                if(client.check_passwordclass(password)){
                                     system("CLS");
                                     break;
                                 }
