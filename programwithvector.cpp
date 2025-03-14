@@ -2,6 +2,7 @@
 #include<string>
 #include<conio.h>
 #include<windows.h>
+#include <vector>
 using namespace std;
 
 int const startingAccountNumber=326012200;
@@ -16,7 +17,6 @@ class Customer{
         string email;
         string address;
         string password;
-        static int account_number;
 
     public:
 
@@ -110,10 +110,6 @@ class Customer{
             return personal_account_no;
         }
 
-        static int get_accountnumber(){
-            return account_number;
-        }
-
         bool check_passwordclass(string password) {
             if(password==this->password)
                 return true;
@@ -133,17 +129,18 @@ class Customer{
         }
 
         
-}cust[10];
+};
 
-int giveaccountnumber(){
-            
-    for(int i=0;i<numberofuser-startingAccountNumber;i++)
-    {
-        if(cust[i].get_personnalaccountnumber()==-1){
-            return i+startingAccountNumber;
+vector<Customer> cust;
+
+int giveaccountnumber() {
+    for (size_t i = 0; i < cust.size(); i++) {
+        if (cust[i].get_personnalaccountnumber() == -1) {
+            return i + startingAccountNumber;
         }
     }
-    return numberofuser++;
+    cust.push_back(Customer());
+    return startingAccountNumber + cust.size() - 1;
 }
 
 string passwordtexter(){
@@ -166,9 +163,10 @@ bool checkaccountnumberisexistornot(int account_number){
     
     bool accountnumberexist=false;
     
-    for(int i=0;i<numberofuser-startingAccountNumber;i++)
+    for(size_t i = 0; i < cust.size(); i++)
     {
-        if(account_number==i+startingAccountNumber){
+        if (account_number >= startingAccountNumber && account_number < startingAccountNumber + cust.size() &&
+    cust[account_number - startingAccountNumber].get_personnalaccountnumber() != -1) {
             accountnumberexist=true;
         }
     }
@@ -278,7 +276,6 @@ bool checkforcreateaccountorlogin()
     while(true){
         int choice;
         cin>>choice;
-        system("CLS");
         if(choice == 1)
             return false;
         else if(choice == 2)
@@ -314,7 +311,7 @@ Customer &login(bool& loginflag){
             cin.ignore();
             password=passwordtexter();
 
-            if(!(account_number>=startingAccountNumber&&account_number<=startingAccountNumber+10))
+            if (!(account_number >= startingAccountNumber && account_number < startingAccountNumber + cust.size()))
             {
                 cout<<endl<<"Accountnumber is not exist !"<<endl;
                 cout<<"Enter valid account number or enter 0 for exit : ";
@@ -360,7 +357,7 @@ Customer &login(bool& loginflag){
         
             bool UserNameExist = false;
         
-            for (int i = 0; i < numberofuser-startingAccountNumber; i++) { 
+            for(size_t i = 0; i < cust.size(); i++) { 
                 if (Username == cust[i].get_username()) {
                     UserNameExist = true;
                     account_number = i + startingAccountNumber;
@@ -527,8 +524,6 @@ bool passwordchecker(Customer& client){
     }
 
 }
-
-int Customer :: account_number = startingAccountNumber;
 
 int main(){
     while(true){
