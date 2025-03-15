@@ -1,7 +1,8 @@
 #include<iostream>
 #include<string>
 #include<conio.h>
-#include<windows.h>
+#include<cmath>
+#include<iomanip>
 using namespace std;
 
 int const startingAccountNumber=326012200;
@@ -208,8 +209,12 @@ void fundtransfer(Customer& client){
 
             while(true){
 
-                cout<<"Enter password : ";
+                cout<<"Enter password or press 0 for back : ";
                 password=passwordtexter();
+                if(password=="0"){
+                    back=true;
+                    break;
+                }
 
                 if(client.check_passwordclass(password)==true){
                     system("CLS");
@@ -222,12 +227,6 @@ void fundtransfer(Customer& client){
                 else{
                     system("CLS");
                     cout<<"You entered an wrong password..."<<endl<<endl;
-                    cout<<"Enter password or press 0 for back : ";
-                    password=passwordtexter();
-                    if(password=="0"){
-                        back=true;
-                        break;
-                    }
                 }
             }
 
@@ -270,8 +269,8 @@ bool checkforcreateaccountorlogin()
 {
     system("CLS");
     cout<<"Welcome to the banking system"<<endl<<endl;
-    cout<<"1 : Create an account"<<endl;
-    cout<<"2 : Login an account"<<endl;
+    cout<<"1 : Login an account"<<endl;
+    cout<<"2 : Create an account"<<endl;
     cout<<"3 : Exit"<<endl<<endl;
 
     cout<<"Choose an option : ";
@@ -280,9 +279,9 @@ bool checkforcreateaccountorlogin()
         cin>>choice;
         system("CLS");
         if(choice == 1)
-            return false;
-        else if(choice == 2)
             return true;
+        else if(choice == 2)
+            return false;
         else if(choice == 3)
             exit(0);
         else
@@ -448,9 +447,9 @@ string validemailchecker(string email){
         for(int i=0;i<email.size();i++)
         {
             if(email[i]=='.')   dot++;
-            if(email[i]=='@')   atherate++; 
+            if(email[i]=='@'&&email[i+1]!='.'&&email[i-1]!='.') atherate++;
         }
-        if(atherate==1&&dot>=1) break;
+        if(atherate==1&&dot>=1&&email[email.size()-1]!='.'&&email[email.size()-1]!='@'&&email[0]!='@'&&email[0]!='.') break;
         else{
             cout<<endl<<"You entered an invalid email addreess..."<<endl<<endl;
             cout<<"Enter an valid email address : ";
@@ -528,6 +527,27 @@ bool passwordchecker(Customer& client){
 
 }
 
+int EMIcalculatorformonths(){
+    double principalamount,annualrate,monthlyrate;
+    int months;
+    cout<<"Enter Loan amount : ";
+    cin>>principalamount;
+    cout<<"Enter Interset rate : ";
+    cin>>annualrate;
+    cout<<"Loan Tenure in months : ";
+    cin>>months;
+
+    monthlyrate=(annualrate/100)/12;
+
+    double EMI = (principalamount * monthlyrate * pow(1 + monthlyrate, months)) / (pow(1 + monthlyrate, months) - 1);
+
+    system("CLS");
+    cout<<"Loan EMI : "<<EMI<<endl
+        <<"Total interest payable : "<<EMI*12-principalamount<<endl
+        <<"Total payment : "<<EMI*12<<endl<<endl;
+
+    return EMI;
+}
 int Customer :: account_number = startingAccountNumber;
 
 int main(){
@@ -544,12 +564,13 @@ int main(){
             cout<<"Welcome "<<client.get_name()<<endl<<endl;
             cout<<"1 : Deposit"<<endl;
             cout<<"2 : Withdraw"<<endl;
-            cout<<"3 : Update account information"<<endl;
+            cout<<"3 : Fund Transfer"<<endl;
             cout<<"4 : Show balance"<<endl;
             cout<<"5 : View account details"<<endl;
-            cout<<"6 : Fund Transfer"<<endl;
-            cout<<"7 : Delete Account"<<endl;
-            cout<<"8 : Logout"<<endl;
+            cout<<"6 : Update account information"<<endl;
+            cout<<"7 : EMI calcultor"<<endl;
+            cout<<"8 : Delete Account"<<endl;
+            cout<<"9 : Logout"<<endl;
             cout<<endl<<"Choose an option : ";
             int choice;
             cin>>choice;
@@ -575,11 +596,12 @@ int main(){
                     cin>>amount;
                     
                     while(true){
-                        cout<<"Enter your password : ";
-                        cin.ignore();
+                        cout<<"Enter password or exit with 0: ";
                         password=passwordtexter();
+                        if(password=="0")   break;
                         if(client.check_passwordclass(password))
                         {
+                            system("CLS");
                             client.withdraw(amount);
                             cout<<endl<<"Withdaw Successfull..."<<endl;
                             cout<<endl<<"Remining Balance : "<<client.get_balance()<<endl<<endl;
@@ -589,7 +611,7 @@ int main(){
                         }
                         else{
                             system("CLS");
-                            cout<<"You entered wrong password...";
+                            cout<<"You entered wrong password..."<<endl;
                             continue;
                         }
                     }
@@ -618,13 +640,13 @@ int main(){
                     system("CLS");
                     break;
 
-                case 6:
+                case 3:
                     system("CLS");
                     fundtransfer(client);
                     system("CLS");
                     break;
 
-                case 7:
+                case 8:
                     system("CLS");
                     if(passwordchecker(client)==true)
                     {
@@ -637,8 +659,15 @@ int main(){
                     }
                     system("CLS");
                     break;
+
+                case 7:
+                    system("CLS");
+                    EMIcalculatorformonths();
+                    cout<<"Press any key to conitnuee..";
+                    getch();
+                    system("CLS");
                 
-                case 8:
+                case 9:
                     system("CLS");
                     cout<<"Logging out..."<<endl;
                     cout<<"Press any key to continue...";
@@ -652,7 +681,7 @@ int main(){
                     cout<<"Please choose appropriate option form list..."<<endl<<endl;
                     break;
                     
-                case 3:
+                case 6:
                     system("CLS");
                     cout<<"Update account information : "<<endl<<endl;
                     cout<<"1 : Update name"<<endl;
