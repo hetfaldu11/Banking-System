@@ -1,8 +1,8 @@
 #include<iostream>
 #include<string>
 #include<conio.h>
-#include<cmath>
-#include<iomanip>
+#include<windows.h>
+#include <vector>
 using namespace std;
 
 int const startingAccountNumber=326012200;
@@ -17,7 +17,6 @@ class Customer{
         string email;
         string address;
         string password;
-        static int account_number;
 
     public:
 
@@ -111,10 +110,6 @@ class Customer{
             return personal_account_no;
         }
 
-        static int get_accountnumber(){
-            return account_number;
-        }
-
         bool check_passwordclass(string password) {
             if(password==this->password)
                 return true;
@@ -134,17 +129,18 @@ class Customer{
         }
 
         
-}cust[10];
+};
 
-int giveaccountnumber(){
-            
-    for(int i=0;i<numberofuser-startingAccountNumber;i++)
-    {
-        if(cust[i].get_personnalaccountnumber()==-1){
-            return i+startingAccountNumber;
+vector<Customer> cust;
+
+int giveaccountnumber() {
+    for (size_t i = 0; i < cust.size(); i++) {
+        if (cust[i].get_personnalaccountnumber() == -1) {
+            return i + startingAccountNumber;
         }
     }
-    return numberofuser++;
+    cust.push_back(Customer());
+    return startingAccountNumber + cust.size() - 1;
 }
 
 string passwordtexter(){
@@ -167,9 +163,10 @@ bool checkaccountnumberisexistornot(int account_number){
     
     bool accountnumberexist=false;
     
-    for(int i=0;i<numberofuser-startingAccountNumber;i++)
+    for(size_t i = 0; i < cust.size(); i++)
     {
-        if(account_number==i+startingAccountNumber){
+        if (account_number >= startingAccountNumber && account_number < startingAccountNumber + cust.size() &&
+    cust[account_number - startingAccountNumber].get_personnalaccountnumber() != -1) {
             accountnumberexist=true;
         }
     }
@@ -209,12 +206,8 @@ void fundtransfer(Customer& client){
 
             while(true){
 
-                cout<<"Enter password or press 0 for back : ";
+                cout<<"Enter password : ";
                 password=passwordtexter();
-                if(password=="0"){
-                    back=true;
-                    break;
-                }
 
                 if(client.check_passwordclass(password)==true){
                     system("CLS");
@@ -227,6 +220,12 @@ void fundtransfer(Customer& client){
                 else{
                     system("CLS");
                     cout<<"You entered an wrong password..."<<endl<<endl;
+                    cout<<"Enter password or press 0 for back : ";
+                    password=passwordtexter();
+                    if(password=="0"){
+                        back=true;
+                        break;
+                    }
                 }
             }
 
@@ -269,19 +268,18 @@ bool checkforcreateaccountorlogin()
 {
     system("CLS");
     cout<<"Welcome to the banking system"<<endl<<endl;
-    cout<<"1 : Login an account"<<endl;
-    cout<<"2 : Create an account"<<endl;
+    cout<<"1 : Create an account"<<endl;
+    cout<<"2 : Login an account"<<endl;
     cout<<"3 : Exit"<<endl<<endl;
 
     cout<<"Choose an option : ";
     while(true){
         int choice;
         cin>>choice;
-        system("CLS");
         if(choice == 1)
-            return true;
-        else if(choice == 2)
             return false;
+        else if(choice == 2)
+            return true;
         else if(choice == 3)
             exit(0);
         else
@@ -313,8 +311,9 @@ Customer &login(bool& loginflag){
             cin.ignore();
             password=passwordtexter();
 
-            if(!(account_number>=startingAccountNumber&&account_number<=startingAccountNumber+10))
+            if (!(account_number >= startingAccountNumber && account_number < startingAccountNumber + cust.size()))
             {
+                
                 cout<<endl<<"Accountnumber is not exist !"<<endl;
                 cout<<"Enter valid account number or enter 0 for exit : ";
                 cin>>account_number;
@@ -359,7 +358,7 @@ Customer &login(bool& loginflag){
         
             bool UserNameExist = false;
         
-            for (int i = 0; i < numberofuser-startingAccountNumber; i++) { 
+            for(size_t i = 0; i < cust.size(); i++) { 
                 if (Username == cust[i].get_username()) {
                     UserNameExist = true;
                     account_number = i + startingAccountNumber;
@@ -447,9 +446,9 @@ string validemailchecker(string email){
         for(int i=0;i<email.size();i++)
         {
             if(email[i]=='.')   dot++;
-            if(email[i]=='@'&&email[i+1]!='.'&&email[i-1]!='.') atherate++;
+            if(email[i]=='@')   atherate++; 
         }
-        if(atherate==1&&dot>=1&&email[email.size()-1]!='.'&&email[email.size()-1]!='@'&&email[0]!='@'&&email[0]!='.') break;
+        if(atherate==1&&dot>=1) break;
         else{
             cout<<endl<<"You entered an invalid email addreess..."<<endl<<endl;
             cout<<"Enter an valid email address : ";
@@ -527,29 +526,6 @@ bool passwordchecker(Customer& client){
 
 }
 
-int EMIcalculatorformonths(){
-    double principalamount,annualrate,monthlyrate;
-    int months;
-    cout<<"Enter Loan amount : ";
-    cin>>principalamount;
-    cout<<"Enter Interset rate : ";
-    cin>>annualrate;
-    cout<<"Loan Tenure in months : ";
-    cin>>months;
-
-    monthlyrate=(annualrate/100)/12;
-
-    double EMI = (principalamount * monthlyrate * pow(1 + monthlyrate, months)) / (pow(1 + monthlyrate, months) - 1);
-
-    system("CLS");
-    cout<<"Loan EMI : "<<EMI<<endl
-        <<"Total interest payable : "<<EMI*12-principalamount<<endl
-        <<"Total payment : "<<EMI*12<<endl<<endl;
-
-    return EMI;
-}
-int Customer :: account_number = startingAccountNumber;
-
 int main(){
     while(true){
         bool loginflag=true;
@@ -564,13 +540,12 @@ int main(){
             cout<<"Welcome "<<client.get_name()<<endl<<endl;
             cout<<"1 : Deposit"<<endl;
             cout<<"2 : Withdraw"<<endl;
-            cout<<"3 : Fund Transfer"<<endl;
+            cout<<"3 : Update account information"<<endl;
             cout<<"4 : Show balance"<<endl;
             cout<<"5 : View account details"<<endl;
-            cout<<"6 : Update account information"<<endl;
-            cout<<"7 : EMI calcultor"<<endl;
-            cout<<"8 : Delete Account"<<endl;
-            cout<<"9 : Logout"<<endl;
+            cout<<"6 : Fund Transfer"<<endl;
+            cout<<"7 : Delete Account"<<endl;
+            cout<<"8 : Logout"<<endl;
             cout<<endl<<"Choose an option : ";
             int choice;
             cin>>choice;
@@ -596,12 +571,11 @@ int main(){
                     cin>>amount;
                     
                     while(true){
-                        cout<<"Enter password or exit with 0: ";
+                        cout<<"Enter your password : ";
+                        cin.ignore();
                         password=passwordtexter();
-                        if(password=="0")   break;
                         if(client.check_passwordclass(password))
                         {
-                            system("CLS");
                             client.withdraw(amount);
                             cout<<endl<<"Withdaw Successfull..."<<endl;
                             cout<<endl<<"Remining Balance : "<<client.get_balance()<<endl<<endl;
@@ -611,7 +585,7 @@ int main(){
                         }
                         else{
                             system("CLS");
-                            cout<<"You entered wrong password..."<<endl;
+                            cout<<"You entered wrong password...";
                             continue;
                         }
                     }
@@ -640,13 +614,13 @@ int main(){
                     system("CLS");
                     break;
 
-                case 3:
+                case 6:
                     system("CLS");
                     fundtransfer(client);
                     system("CLS");
                     break;
 
-                case 8:
+                case 7:
                     system("CLS");
                     if(passwordchecker(client)==true)
                     {
@@ -659,15 +633,8 @@ int main(){
                     }
                     system("CLS");
                     break;
-
-                case 7:
-                    system("CLS");
-                    EMIcalculatorformonths();
-                    cout<<"Press any key to conitnuee..";
-                    getch();
-                    system("CLS");
                 
-                case 9:
+                case 8:
                     system("CLS");
                     cout<<"Logging out..."<<endl;
                     cout<<"Press any key to continue...";
@@ -681,7 +648,7 @@ int main(){
                     cout<<"Please choose appropriate option form list..."<<endl<<endl;
                     break;
                     
-                case 6:
+                case 3:
                     system("CLS");
                     cout<<"Update account information : "<<endl<<endl;
                     cout<<"1 : Update name"<<endl;
