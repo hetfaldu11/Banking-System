@@ -8,11 +8,6 @@
 
 <h3>This project has more filehandling so prepare that</h3>
 
-<h5>This time we focus on</h5>
-<p>Create a customer and admin class</p>
-<p>Add some functionality like view account balance ,update info,delete account</p>
-<br>
-
 <h5>Main topic should be coverd</h5>
 <p>
     1️⃣ User Account Management<br>
