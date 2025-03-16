@@ -527,27 +527,31 @@ bool passwordchecker(Customer& client){
 
 }
 
-int EMIcalculatorformonths(){
-    double principalamount,annualrate,monthlyrate;
+double EMIcalculatorformonths() {
+    double principalamount, annualrate, monthlyrate;
     int months;
-    cout<<"Enter Loan amount : ";
-    cin>>principalamount;
-    cout<<"Enter Interset rate : ";
-    cin>>annualrate;
-    cout<<"Loan Tenure in months : ";
-    cin>>months;
 
-    monthlyrate=(annualrate/100)/12;
+    cout << "Enter Loan amount: ";
+    cin >> principalamount;
+    cout << "Enter Interest rate (Annual %): ";
+    cin >> annualrate;
+    cout << "Loan Tenure in months: ";
+    cin >> months;
 
-    double EMI = (principalamount * monthlyrate * pow(1 + monthlyrate, months)) / (pow(1 + monthlyrate, months) - 1);
+    monthlyrate = (annualrate / 100) / 12;
 
-    system("CLS");
-    cout<<"Loan EMI : "<<EMI<<endl
-        <<"Total interest payable : "<<EMI*12-principalamount<<endl
-        <<"Total payment : "<<EMI*12<<endl<<endl;
+    double EMI = (principalamount * monthlyrate * pow(1 + monthlyrate, months)) / 
+                 (pow(1 + monthlyrate, months) - 1);
+
+    system("CLS"); // Clears the screen
+
+    cout << "Loan EMI: " << EMI << endl;
+    cout << "Total interest payable: " << (EMI * months) - principalamount << endl;
+    cout << "Total payment: " << EMI * months << endl << endl;
 
     return EMI;
 }
+
 int Customer :: account_number = startingAccountNumber;
 
 int main(){
@@ -666,6 +670,7 @@ int main(){
                     cout<<"Press any key to conitnuee..";
                     getch();
                     system("CLS");
+                    break;
                 
                 case 9:
                     system("CLS");
