@@ -149,16 +149,17 @@ int giveaccountnumber(){
 
 string passwordtexter(){
     string password;
-    while(1){
-        char s;
-        s=getch();
-        if (s == '\b') {
-            cout << "\b \b";
-            password.pop_back();
+    char ch;
+    while ((ch = _getch()) != '\r') { // Enter key
+        if (ch == '\b') { // Backspace
+            if (!password.empty()) {
+                password.pop_back();
+                cout << "\b \b"; // Erase the last asterisk
+            }
+        } else {
+            password.push_back(ch);
+            cout << '*'; // Display asterisk
         }
-        if(s=='\r') break;
-        else    password+=s;
-        cout<<"*";
     }
     return password;
 }
@@ -781,7 +782,7 @@ int main(){
                             new_data=validemailchecker(new_data);
 
                             while(true){
-                                cout<<"Enter password or enter 0 to exit : ";
+                                cout<<endl<<"Enter password or enter 0 to exit : ";
                                 password=passwordtexter();
                                 if(password=="0"){
                                     back=true;
