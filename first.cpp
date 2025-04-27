@@ -149,16 +149,17 @@ int giveaccountnumber(){
 
 string passwordtexter(){
     string password;
-    while(1){
-        char s;
-        s=getch();
-        if (s == '\b') {
-            cout << "\b \b";
-            password.pop_back();
+    char ch;
+    while ((ch = _getch()) != '\r') { // Enter key
+        if (ch == '\b') { // Backspace
+            if (!password.empty()) {
+                password.pop_back();
+                cout << "\b \b"; // Erase the last asterisk
+            }
+        } else {
+            password.push_back(ch);
+            cout << '*'; // Display asterisk
         }
-        if(s=='\r') break;
-        else    password+=s;
-        cout<<"*";
     }
     return password;
 }
@@ -527,27 +528,31 @@ bool passwordchecker(Customer& client){
 
 }
 
-int EMIcalculatorformonths(){
-    double principalamount,annualrate,monthlyrate;
+double EMIcalculatorformonths() {
+    double principalamount, annualrate, monthlyrate;
     int months;
-    cout<<"Enter Loan amount : ";
-    cin>>principalamount;
-    cout<<"Enter Interset rate : ";
-    cin>>annualrate;
-    cout<<"Loan Tenure in months : ";
-    cin>>months;
 
-    monthlyrate=(annualrate/100)/12;
+    cout << "Enter Loan amount: ";
+    cin >> principalamount;
+    cout << "Enter Interest rate (Annual %): ";
+    cin >> annualrate;
+    cout << "Loan Tenure in months: ";
+    cin >> months;
 
-    double EMI = (principalamount * monthlyrate * pow(1 + monthlyrate, months)) / (pow(1 + monthlyrate, months) - 1);
+    monthlyrate = (annualrate / 100) / 12;
 
-    system("CLS");
-    cout<<"Loan EMI : "<<EMI<<endl
-        <<"Total interest payable : "<<EMI*12-principalamount<<endl
-        <<"Total payment : "<<EMI*12<<endl<<endl;
+    double EMI = (principalamount * monthlyrate * pow(1 + monthlyrate, months)) / 
+                 (pow(1 + monthlyrate, months) - 1);
+
+    system("CLS"); // Clears the screen
+
+    cout << "Loan EMI: " << EMI << endl;
+    cout << "Total interest payable: " << (EMI * months) - principalamount << endl;
+    cout << "Total payment: " << EMI * months << endl << endl;
 
     return EMI;
 }
+
 int Customer :: account_number = startingAccountNumber;
 
 int main(){
@@ -666,6 +671,7 @@ int main(){
                     cout<<"Press any key to conitnuee..";
                     getch();
                     system("CLS");
+                    break;
                 
                 case 9:
                     system("CLS");
@@ -776,7 +782,7 @@ int main(){
                             new_data=validemailchecker(new_data);
 
                             while(true){
-                                cout<<"Enter password or enter 0 to exit : ";
+                                cout<<endl<<"Enter password or enter 0 to exit : ";
                                 password=passwordtexter();
                                 if(password=="0"){
                                     back=true;
