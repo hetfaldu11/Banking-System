@@ -6,6 +6,7 @@
 
 <h3>Run instruction</h3>
 g++ -o bank_app main.cpp banksystem.cpp customer.cpp bankofficer.cpp transaction.cpp ./bank_app.exe
+<br>
 ./bank_app.exe
 
 <h3>This project has more filehandling so prepare that</h3>
