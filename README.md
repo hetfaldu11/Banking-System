@@ -5,7 +5,7 @@
 <h3>Please , Use your appropriate branch to make changes</h3>
 
 <h3>Run instruction</h3>
-g++ -o bank_app main.cpp banksystem.cpp customer.cpp bankofficer.cpp transaction.cpp ./bank_app.exe
+g++ -o bank_app main.cpp banksystem.cpp customer.cpp bankofficer.cpp transaction.cpp
 <br>
 ./bank_app.exe
 
