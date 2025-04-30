@@ -406,14 +406,14 @@ void BankSystem::depositAmount() {
         return;
     }
     
-    cout << "Current Balance: $" << customer->getBalance() << endl;
+    cout << "Current Balance: Rs." << customer->getBalance() << endl;
     cout << "Enter Amount to Deposit: ";
     cin >> amount;
     
     try {
         customer->deposit(amount);
         saveCustomerData();
-        cout << "Deposit successful! New Balance: $" << customer->getBalance() << endl;
+        cout << "Deposit successful! New Balance: Rs." << customer->getBalance() << endl;
     } catch (const exception& e) {
         cout << "Error: " << e.what() << endl;
     }
@@ -439,14 +439,14 @@ void BankSystem::withdrawAmount() {
         return;
     }
     
-    cout << "Current Balance: $" << customer->getBalance() << endl;
+    cout << "Current Balance: Rs." << customer->getBalance() << endl;
     cout << "Enter Amount to Withdraw: ";
     cin >> amount;
     
     try {
         customer->withdraw(amount);
         saveCustomerData();
-        cout << "Withdrawal successful! New Balance: $" << customer->getBalance() << endl;
+        cout << "Withdrawal successful! New Balance: Rs." << customer->getBalance() << endl;
     } catch (const exception& e) {
         cout << "Error: " << e.what() << endl;
     }
