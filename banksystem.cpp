@@ -264,6 +264,58 @@ void BankSystem::viewCustomerDetails() {
     cout << "Press any key to continue...";
     _getch();
 }
+
+void BankSystem::transferFunds() {
+    system("CLS");
+    cout << "======== TRANSFER FUNDS ========" << endl;
+    int fromAccount, toAccount;
+    float amount;
+    
+    cout << "Enter Source Account Number: ";
+    cin >> fromAccount;
+    
+    Customer* fromCustomer = findCustomerByAccountNumber(fromAccount);
+    if (!fromCustomer) {
+        cout << "Source account not found!" << endl;
+        cout << "Press any key to continue...";
+        _getch();
+        return;
+    }
+    
+    cout << "Enter Destination Account Number: ";
+    cin >> toAccount;
+    
+    if (fromAccount == toAccount) {
+        cout << "Cannot transfer to the same account!" << endl;
+        cout << "Press any key to continue...";
+        _getch();
+        return;
+    }
+    
+    Customer* toCustomer = findCustomerByAccountNumber(toAccount);
+    if (!toCustomer) {
+        cout << "Destination account not found!" << endl;
+        cout << "Press any key to continue...";
+        _getch();
+        return;
+    }
+    
+    cout << "Enter Amount to Transfer: ";
+    cin >> amount;
+    
+    try {
+        fromCustomer->transfer(*toCustomer, amount);
+        saveCustomerData();
+        cout << "Transfer successful!" << endl;
+        cout << "New balance for account " << fromAccount << ": $" << fromCustomer->getBalance() << endl;
+        cout << "New balance for account " << toAccount << ": $" << toCustomer->getBalance() << endl;
+    } catch (const exception& e) {
+        cout << "Transfer failed: " << e.what() << endl;
+    }
+    
+    cout << "Press any key to continue...";
+    _getch();
+}
     
 void BankSystem::updateCustomerInfo() {
     system("CLS");
@@ -613,8 +665,9 @@ void BankSystem::accountOperationsMenu() {
         cout << "======== BANK ACCOUNT OPERATIONS ========" << endl;
         cout << "1. Deposit Amount" << endl;
         cout << "2. Withdraw Amount" << endl;
-        cout << "3. View Transaction Statement" << endl;
-        cout << "4. Back to Main Menu" << endl;
+        cout << "3. Transfer Funds" << endl;  // New option
+        cout << "4. View Transaction Statement" << endl;
+        cout << "5. Back to Main Menu" << endl;  // Changed from 4 to 5
         cout << "Enter your choice: ";
         
         int choice;
@@ -623,8 +676,9 @@ void BankSystem::accountOperationsMenu() {
         switch (choice) {
             case 1: depositAmount(); break;
             case 2: withdrawAmount(); break;
-            case 3: viewTransactionStatement(); break;
-            case 4: return;
+            case 3: transferFunds(); break;  // New case
+            case 4: viewTransactionStatement(); break;
+            case 5: return;  // Changed from 4 to 5
             default:
                 cout << "Invalid choice! Please try again." << endl;
                 cout << "Press any key to continue...";

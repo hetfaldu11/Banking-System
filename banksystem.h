@@ -70,6 +70,8 @@ class BankSystem {
         string validemailchecker(string);
 
         string validaadharchecker(string);
+
+        void transferFunds();
     
     public:
         BankSystem() ;

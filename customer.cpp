@@ -92,3 +92,20 @@ void Customer::saveTransactionToFile(const Transaction& t) const {
         outfile.close();
     }
 }
+
+bool Customer::transfer(Customer& recipient, float amount) {
+    if (amount <= 0) {
+        throw invalid_argument("Transfer amount must be positive");
+    }
+    if (amount > balance) {
+        throw runtime_error("Insufficient balance for transfer");
+    }
+    
+    balance -= amount;
+    recipient.balance += amount;
+    
+    recordTransaction("Transfer Out", amount, "To Acc# " + to_string(recipient.getAccountNumber()));
+    recipient.recordTransaction("Transfer In", amount, "From Acc# " + to_string(accountNumber));
+    
+    return true;
+}

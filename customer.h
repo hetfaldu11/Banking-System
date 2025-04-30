@@ -50,6 +50,8 @@ class Customer {
         void recordTransaction(string , float , string description = "") ;
     
         void printTransactionStatement() const ;
+
+        bool transfer(Customer& recipient, float amount);
     
     private:
         void saveTransactionToFile(const Transaction& ) const ;
