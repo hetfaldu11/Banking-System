@@ -15,7 +15,7 @@ string Transaction::getDescription() const { return description; }
     
 string Transaction::toString() const {
     ostringstream oss;
-    oss << timestamp << " - " << type << " - $" << fixed << setprecision(2) << amount;
+    oss << timestamp << " - " << type << " - Rs." << fixed << setprecision(2) << amount;
     if (!description.empty()) {
         oss << " - " << description;
     }

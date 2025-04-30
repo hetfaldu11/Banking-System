@@ -59,7 +59,7 @@ void Customer::showDetails() const {
     cout << "Phone: " << phone << endl;
     cout << "Email: " << email << endl;
     cout << "Aadhar: " << aadhar << endl;
-    cout << "Balance: $" << fixed << setprecision(2) << balance << endl;
+    cout << "Balance: Rs." << fixed << setprecision(2) << balance << endl;
 }
 
 void Customer::recordTransaction(string type, float amount, string description) {
@@ -71,7 +71,7 @@ void Customer::recordTransaction(string type, float amount, string description) 
 void Customer::printTransactionStatement() const {
     cout << "Transaction Statement for Account: " << accountNumber << endl;
     cout << "Customer: " << name << endl;
-    cout << "Current Balance: $" << fixed << setprecision(2) << balance << endl <<endl;
+    cout << "Current Balance: Rs." << fixed << setprecision(2) << balance << endl <<endl;
     
     cout << left << setw(30) << "Date & Time" 
              << setw(22) << "Type" 
